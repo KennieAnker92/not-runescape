@@ -41,7 +41,7 @@ public class Player
 
     public void ResetHealth()
     {
-        CurrentHp = MaxHp;
+        CurrentHp = 100;
     }
 
     public void PrintInventory()

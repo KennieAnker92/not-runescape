@@ -10,7 +10,7 @@ Console.WriteLine("What is your character name? ");
 var characterName = Console.ReadLine()?.Trim();
 
 if (string.IsNullOrWhiteSpace(characterName))
-    characterName = "Adventurer";
+    characterName = "bob";
 
 Console.WriteLine($"Welcome to Gielinor, {characterName}");
 
