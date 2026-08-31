@@ -4,12 +4,17 @@ using OsrsTracker;
 var bossLogs = new List<BossLog>();
 var player = new Player();
 
+Console.Write("Enter your character name: ");
+string? nameInput = Console.ReadLine();
+string playerName = nameInput ?? "Adventurer";
+Console.WriteLine($"Welcome to Gielinor, {playerName}!");
+
 Console.WriteLine("=== OSRS Boss & Combat Tracker ===");
 
 while (true)
 {
     Console.WriteLine($"\n[HP: {player.CurrentHp}/{player.MaxHp} | Gold: {player.Gold} GP]");
-    Console.Write("[1] Log Boss Kill  [2] View Drop Log  [3] View Inventory  [4] Drop Item  [99] Fight Hill Giant  [0] Exit\nChoice: ");
+    Console.Write("[1] Log Boss Kill  [2] View Drop Log  [3] View Inventory  [4] Drop Item  [5] Rest at Lumbridge  [99] Fight Hill Giant  [0] Exit\nChoice: ");
     var input = Console.ReadLine()?.Trim();
 
     if (input == "0") break;
@@ -31,6 +36,7 @@ while (true)
     else if (input == "2")
     {
         Console.WriteLine("\n--- Drop Log ---");
+        Console.WriteLine($"Total drops logged: {bossLogs.Count}");
         if (bossLogs.Count == 0) Console.WriteLine("No drops logged yet!");
         for (int i = 0; i < bossLogs.Count; i++)
         {
@@ -46,6 +52,11 @@ while (true)
     else if (input == "4")
     {
         HandleDropItem(player);
+    }
+    else if (input == "5")
+    {
+        player.CurrentHp = player.MaxHp;
+        Console.WriteLine("\nYou rest at Lumbridge and fell fully restored!");
     }
     else if (input == "99")
     {
