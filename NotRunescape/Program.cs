@@ -14,6 +14,8 @@ if (string.IsNullOrWhiteSpace(characterName))
 
 Console.WriteLine($"Welcome to Gielinor, {characterName}");
 
+player.SetStartingGold(100);
+
 while (true)
 {
     Console.WriteLine($"\n[HP: {player.CurrentHp}/{player.MaxHp} | Gold: {player.Gold} GP]");
