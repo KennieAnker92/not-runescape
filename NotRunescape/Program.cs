@@ -5,24 +5,22 @@ var bossLogs = new List<BossLog>();
 var player = new Player();
 
 Console.WriteLine("=== OSRS Boss & Combat Tracker ===");
+Console.Write("What is your name:");
+var Name = Console.ReadLine()?.Trim();
+
+if (Name != "")
+{
+    Console.Write("Welcome to Gielinor, " + Name);
+}
+else if (Name == "")
+{
+    Console.Write("Not a valid Name");
+}
 
 while (true)
-{
-    Console.Write("What is your name:");
-    var Name = Console.ReadLine()?.Trim();
-
-    if (Name != "")
-    {
-        Console.Write("Welcome to Gielinor, " + Name);
-    }
-    else if (Name == "")
-    {
-        Console.Write("Not a valid Name");
-        break;
-    }
-    
+{ 
     Console.WriteLine($"\n[HP: {player.CurrentHp}/{player.MaxHp} | Gold: {player.Gold} GP]");
-    Console.Write("[1] Log Boss Kill  [2] View Drop Log  [3] View Inventory  [4] Drop Item  [99] Fight Hill Giant  [0] Exit\nChoice: ");
+    Console.Write("[1] Log Boss Kill  [2] View Drop Log  [3] View Inventory  [4] Drop Item [5] Rest at Lumbridge  [99] Fight Hill Giant  [0] Exit\nChoice: ");
     var input = Console.ReadLine()?.Trim();
 
     if (input == "0") break;
@@ -60,6 +58,10 @@ while (true)
     {
         HandleDropItem(player);
     }
+    else if (input == "5")
+    {
+        HandlePlayerHP(player);
+    }
     else if (input == "99")
     {
         StartGiantFight(player, bossLogs);
@@ -91,6 +93,13 @@ static void HandleDropItem(Player player)
         Console.WriteLine("Invalid amount.");
     }
 }
+
+static void HandlePlayerHP(Player player)
+{
+    Console.Write("You have had a nice rest and are now at full hp!!");
+    player.CurrentHp = player.MaxHp;
+}
+
 
 static void StartGiantFight(Player player, List<BossLog> bossLogs)
 {
