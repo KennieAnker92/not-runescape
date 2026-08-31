@@ -116,7 +116,11 @@ static void StartGiantFight(Player player, List<BossLog> bossLogs)
             if (player.Inventory.ContainsKey("Lobster") && player.Inventory["Lobster"] > 0)
             {
                 player.Inventory["Lobster"]--;
-                player.CurrentHp = Math.Min(player.MaxHp, player.CurrentHp + 12);
+                if (player.CurrentHp + 12 > player.MaxHp)
+                    player.CurrentHp = player.MaxHp;
+                else
+                    player.CurrentHp = Math.Min(player.MaxHp, player.CurrentHp + 12);
+                
                 Console.WriteLine($"\nYou ate a Lobster! Restored HP to {player.CurrentHp}.");
             }
             else
