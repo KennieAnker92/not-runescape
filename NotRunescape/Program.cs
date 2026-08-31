@@ -10,11 +10,11 @@ Console.WriteLine("What is your character name? ");
 var characterName = Console.ReadLine()?.Trim();
 
 if (string.IsNullOrWhiteSpace(characterName))
-    characterName = "Adventurer";
+    characterName = "Bob";
 
 Console.WriteLine($"Welcome to Gielinor, {characterName}");
 
-player.SetStartingGold(100);
+player.SetStartingGold(1000);
 
 while (true)
 {
