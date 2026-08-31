@@ -5,6 +5,18 @@ var bossLogs = new List<BossLog>();
 var player = new Player();
 
 Console.WriteLine("=== OSRS Boss & Combat Tracker ===");
+Console.WriteLine("Enter your name:");
+
+var Name = Console.ReadLine().Trim();
+
+if (string.IsNullOrEmpty(Name))
+{
+    Name = "Player";
+}
+{
+    
+}
+Console.WriteLine($"Welcome to Gielinor, {Name}");
 
 while (true)
 {
