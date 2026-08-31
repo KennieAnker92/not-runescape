@@ -43,6 +43,15 @@ while (true)
     {
         Console.WriteLine("\n--- Drop Log ---");
         if (bossLogs.Count == 0) Console.WriteLine("No drops logged yet!");
+        else if (bossLogs.Count != 0)
+        {
+            var drops = 0;
+            for (int i = 0; i < bossLogs.Count; i++)
+            {
+                drops = i+1;
+            }
+            Console.WriteLine("Total drops: " + drops);
+        }
         for (int i = 0; i < bossLogs.Count; i++)
         {
             var log = bossLogs[i];
