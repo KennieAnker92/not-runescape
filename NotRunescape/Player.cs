@@ -39,6 +39,11 @@ public class Player
         return true;
     }
 
+    public void ResetHealth()
+    {
+        CurrentHp = MaxHp;
+    }
+
     public void PrintInventory()
     {
         Console.WriteLine("\n--- Inventory ---");
