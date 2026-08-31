@@ -11,6 +11,11 @@ public class Player
         { "Rune Scimitar", 1 }
     };
 
+    public void SetStartingGold(int gold)
+    {
+        Gold = gold;
+    }
+
     public void AddItem(string item, int amount)
     {
         if (Inventory.ContainsKey(item))
