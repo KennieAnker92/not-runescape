@@ -12,3 +12,18 @@ C:\Users\kan\Education material\NotRunescape\NotRunescape\obj\Debug\net10.0\refi
 C:\Users\kan\Education material\NotRunescape\NotRunescape\obj\Debug\net10.0\NotRunescape.pdb
 C:\Users\kan\Education material\NotRunescape\NotRunescape\obj\Debug\net10.0\NotRunescape.genruntimeconfig.cache
 C:\Users\kan\Education material\NotRunescape\NotRunescape\obj\Debug\net10.0\ref\NotRunescape.dll
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\bin\Debug\net10.0\NotRunescape.exe
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\bin\Debug\net10.0\NotRunescape.deps.json
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\bin\Debug\net10.0\NotRunescape.runtimeconfig.json
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\bin\Debug\net10.0\NotRunescape.dll
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\bin\Debug\net10.0\NotRunescape.pdb
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\obj\Debug\net10.0\NotRunescape.GeneratedMSBuildEditorConfig.editorconfig
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\obj\Debug\net10.0\NotRunescape.AssemblyInfoInputs.cache
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\obj\Debug\net10.0\NotRunescape.AssemblyInfo.cs
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\obj\Debug\net10.0\NotRunescape.csproj.CoreCompileInputs.cache
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\obj\Debug\net10.0\NotRunescape.sourcelink.json
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\obj\Debug\net10.0\NotRunescape.dll
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\obj\Debug\net10.0\refint\NotRunescape.dll
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\obj\Debug\net10.0\NotRunescape.pdb
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\obj\Debug\net10.0\NotRunescape.genruntimeconfig.cache
+C:\Datamatiker\3rd_semester\SYS\not-runescape\NotRunescape\obj\Debug\net10.0\ref\NotRunescape.dll
