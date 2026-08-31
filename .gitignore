@@ -9,6 +9,16 @@
 build/
 artifacts/
 
+# Rider / IntelliJ workspace settings
+.idea/
+*.sln.iml
+
+# Build outputs
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+
 ## =======================================================================
 ## Visual Studio & IDE Artifacts
 ## =======================================================================
