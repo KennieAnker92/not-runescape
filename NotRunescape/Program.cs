@@ -16,7 +16,9 @@ if (Name != "")
 }
 else if (string.IsNullOrWhiteSpace(Name))
 {
-    
+    Console.Write("Not a valid name, you are now a Penguin. ");
+    Name = "Penguin";
+    Console.Write("Welcome to Gielinor, " + Name + "!");
 }
 
 while (true)
