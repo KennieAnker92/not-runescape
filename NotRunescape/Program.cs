@@ -116,7 +116,7 @@ static void StartGiantFight(Player player, List<BossLog> bossLogs)
     while (player.CurrentHp > 0 && giantHp > 0)
     {
         Console.WriteLine($"Your HP: {player.CurrentHp}/{player.MaxHp} | Hill Giant HP: {giantHp}");
-        Console.Write("Action: [1] Slash with Rune Scimitar  [2] Eat Lobster  [3] Special Attack (50 GP) Choice: ");
+        Console.Write("Action: [1] Slash with Rune Scimitar  [2] Eat Lobster  [3] Special Attack (50 GP)  [4] Flee Choice: ");
         var choice = Console.ReadLine()?.Trim();
 
         if (choice == "1")
@@ -158,6 +158,16 @@ static void StartGiantFight(Player player, List<BossLog> bossLogs)
                 Console.ResetColor();
             }
         }
+        else if (choice == "4")
+        {
+            Console.WriteLine("\nYou flee from the Hill Giant! Returning to Lumbridge...");
+            player.CurrentHp = player.MaxHp;
+            return;
+        }
+        else
+        {
+            Console.WriteLine("\nInvalid choice! Please select a valid action.");
+        }            
 
         if (giantHp > 0)
         {
