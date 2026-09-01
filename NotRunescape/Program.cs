@@ -1,5 +1,4 @@
 ﻿using NotRunescape;
-using OsrsTracker;
 
 var bossLogs = new List<BossLog>();
 var player = new Player();
@@ -18,8 +17,12 @@ player.SetStartingGold(100);
 
 while (true)
 {
-    Console.WriteLine($"\n[HP: {player.CurrentHp}/{player.MaxHp} | Gold: {player.Gold} GP]");
-    Console.Write("[1] Log Boss Kill  [2] View Drop Log  [3] View Inventory  [4] Drop Item  [5] Rest at Lumbridge [99] Fight Hill Giant  [0] Exit\nChoice: ");
+    // Integrated EXERCISE 3 (Health Bar) & EXERCISE 2 (Gold Coins) on the main menu
+    Console.WriteLine();
+    SpriteRenderer.DrawHealthBar(player.CurrentHp, player.MaxHp);
+    SpriteRenderer.DrawGold(player.Gold);
+
+    Console.Write("[1] Log Boss Kill  [2] View Drop Log  [3] View Inventory  [4] Drop Item  [5] Rest  [6] Explore Map (WASD)  [99] Fight Hill Giant  [0] Exit\nChoice: ");
     var input = Console.ReadLine()?.Trim();
 
     if (input == "0") break;
@@ -47,13 +50,16 @@ while (true)
         for (int i = 0; i < bossLogs.Count; i++)
         {
             var log = bossLogs[i];
-            string status = log.IsUnique ? "UNIQUE DROP!" : "Normal Drop";
-            Console.WriteLine($"#{i + 1}: {log.BossName} - Drop: {log.DropName} [{status}] ({log.Timestamp:HH:mm})");
+            
+            // Integrated EXERCISE 4: Color-Coded Drop Rarity Renderer
+            Console.Write($"#{i + 1}: {log.BossName} - ");
+            SpriteRenderer.PrintLootItem(log.DropName, log.IsUnique);
         }
     }
     else if (input == "3")
     {
-        player.PrintInventory();
+        // Integrated EXERCISE 6: Visual Inventory Box UI
+        SpriteRenderer.DrawInventoryBox(player.Inventory);
     }
     else if (input == "4")
     {
@@ -62,6 +68,13 @@ while (true)
     else if (input == "5")
     {
         player.ResetHealth();
+        Console.WriteLine("Resting at Lumbridge... HP Restored!");
+    }
+    else if (input == "6")
+    {
+        var map = new WorldMap();
+        // Launches WASD movement and connects to combat on 'G' tiles
+        map.ExploreDungeon(player, bossLogs, StartGiantFight); 
     }
     else if (input == "99")
     {
@@ -71,7 +84,7 @@ while (true)
 
 static void HandleDropItem(Player player)
 {
-    player.PrintInventory();
+    SpriteRenderer.DrawInventoryBox(player.Inventory);
     if (player.Inventory.Count == 0) return;
 
     Console.Write("\nEnter the exact name of the item to drop: ");
@@ -104,28 +117,30 @@ static void StartGiantFight(Player player, List<BossLog> bossLogs)
         return;
     }
 
-    Console.Clear();
-    Console.ForegroundColor = ConsoleColor.Yellow;
-    Console.WriteLine("=== HILL GIANT CAVE ===");
-    Console.WriteLine("A wild Hill Giant (Level 28) blocks your path!\n");
-    Console.ResetColor();
-
     int giantHp = 35;
+    int giantMaxHp = 35;
+    int specialEnergy = 100; // Used for Exercise 7
     var rng = new Random();
 
     while (player.CurrentHp > 0 && giantHp > 0)
     {
-        Console.WriteLine($"Your HP: {player.CurrentHp}/{player.MaxHp} | Hill Giant HP: {giantHp}");
-        Console.Write("Action: [1] Slash with Rune Scimitar  [2] Eat Lobster\nChoice: ");
+        // Integrated EXERCISE 8: Render Full Combat Screen
+        SpriteRenderer.RenderCombatScreen(player, "Hill Giant", giantHp, giantMaxHp);
+
+        // Integrated EXERCISE 7: Render Special Energy Bar
+        SpriteRenderer.DrawSpecialEnergyBar(specialEnergy);
+
+        Console.Write("\nAction Choice: ");
         var choice = Console.ReadLine()?.Trim();
 
         if (choice == "1")
         {
             int playerHit = rng.Next(0, 15);
             giantHp -= playerHit;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nYou slash the Hill Giant for a {playerHit}!");
-            Console.ResetColor();
+
+            // Integrated EXERCISE 1: Green Player Hitsplat
+            Console.Write("\nYou hit the Hill Giant:");
+            SpriteRenderer.DrawDamageHitsplat(playerHit, isPlayer: true);
         }
         else if (choice == "2")
         {
@@ -140,24 +155,50 @@ static void StartGiantFight(Player player, List<BossLog> bossLogs)
                 Console.WriteLine("\nYou don't have any Lobsters in your inventory!");
             }
         }
+        else if (choice == "3")
+        {
+            // Integrated Special Attack using EXERCISE 7 & EXERCISE 1
+            if (specialEnergy >= 50)
+            {
+                specialEnergy -= 50;
+                int specHit1 = rng.Next(0, 12);
+                int specHit2 = rng.Next(0, 12);
+                giantHp -= (specHit1 + specHit2);
+
+                Console.Write("\nSPECIAL ATTACK Hit 1:");
+                SpriteRenderer.DrawDamageHitsplat(specHit1, isPlayer: true);
+                Console.Write("SPECIAL ATTACK Hit 2:");
+                SpriteRenderer.DrawDamageHitsplat(specHit2, isPlayer: true);
+            }
+            else
+            {
+                Console.WriteLine("\nNot enough Special Energy!");
+            }
+        }
 
         if (giantHp > 0)
         {
             int giantHit = rng.Next(0, 6);
             player.CurrentHp -= giantHit;
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"The Hill Giant swings his club for {giantHit} damage!\n");
-            Console.ResetColor();
+
+            // Integrated EXERCISE 1: Red Monster Hitsplat
+            Console.Write("The Hill Giant hits you:");
+            SpriteRenderer.DrawDamageHitsplat(giantHit, isPlayer: false);
+
+            // Recharge special energy slightly per turn
+            specialEnergy = Math.Min(100, specialEnergy + 10);
         }
+
+        Console.WriteLine("\nPress ENTER to continue turn...");
+        Console.ReadLine();
     }
 
     if (player.CurrentHp > 0)
     {
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("\nVICTORY! The Hill Giant collapses!");
-        Console.ResetColor();
+        // Integrated EXERCISE 5: Visual Victory Banner
+        SpriteRenderer.DrawVictoryBanner("Hill Giant");
 
-        // Selective Loot Prompt
+        // Selective Loot Prompt with EXERCISE 4 Color-Coded Rarity
         var droppedItems = new List<(string Name, bool IsUnique)>
         {
             ("Big Bones", false),
@@ -165,9 +206,10 @@ static void StartGiantFight(Player player, List<BossLog> bossLogs)
             ("Giant Key", true)
         };
 
-        Console.WriteLine("\n--- Ground Loot ---");
+        Console.WriteLine("--- Ground Loot ---");
         foreach (var drop in droppedItems)
         {
+            SpriteRenderer.PrintLootItem(drop.Name, drop.IsUnique);
             Console.Write($"Pick up {drop.Name}? (y/n): ");
             var choice = Console.ReadLine()?.Trim().ToLower();
 

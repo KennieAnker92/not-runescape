@@ -1,4 +1,4 @@
-﻿namespace OsrsTracker;
+﻿namespace NotRunescape;
 
 public class Player
 {
