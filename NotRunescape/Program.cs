@@ -3,6 +3,7 @@ using OsrsTracker;
 
 var bossLogs = new List<BossLog>();
 var player = new Player();
+var highScores = new HighScores();
 
 Console.WriteLine("=== OSRS Boss & Combat Tracker ===");
 Console.WriteLine("What is your character name? ");
@@ -19,7 +20,7 @@ player.SetStartingGold(100);
 while (true)
 {
     Console.WriteLine($"\n[HP: {player.CurrentHp}/{player.MaxHp} | Gold: {player.Gold} GP]");
-    Console.Write("[1] Log Boss Kill  [2] View Drop Log  [3] View Inventory  [4] Drop Item  [5] Rest at Lumbridge [99] Fight Hill Giant  [0] Exit\nChoice: ");
+    Console.Write("[1] Log Boss Kill  [2] View Drop Log  [3] View Inventory  [4] Drop Item  [5] Rest at Lumbridge  [6] View High Scores  [99] Fight Hill Giant  [0] Exit\nChoice: ");
     var input = Console.ReadLine()?.Trim();
 
     if (input == "0") break;
@@ -63,9 +64,13 @@ while (true)
     {
         player.ResetHealth();
     }
+    else if (input == "6")
+    {
+        highScores.DisplayTopHits();
+    }
     else if (input == "99")
     {
-        StartGiantFight(player, bossLogs);
+        StartGiantFight(player, bossLogs, highScores);
     }
 }
 
@@ -95,7 +100,7 @@ static void HandleDropItem(Player player)
     }
 }
 
-static void StartGiantFight(Player player, List<BossLog> bossLogs)
+static void StartGiantFight(Player player, List<BossLog> bossLogs, HighScores highScores)
 {
     if (player.CurrentHp <= 0)
     {
@@ -123,6 +128,7 @@ static void StartGiantFight(Player player, List<BossLog> bossLogs)
         {
             int playerHit = rng.Next(0, 15);
             giantHp -= playerHit;
+            highScores.RecordHit(playerHit);
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"\nYou slash the Hill Giant for a {playerHit}!");
             Console.ResetColor();
@@ -151,6 +157,10 @@ static void StartGiantFight(Player player, List<BossLog> bossLogs)
                 player.Gold -= 50;
                 int hit1 = rng.Next(0, 10);
                 int hit2 = rng.Next(0, 10);
+                
+                highScores.RecordHit(hit1);
+                highScores.RecordHit(hit2);
+                
                 int totalHit = hit1 + hit2;
                 giantHp -= totalHit;
                 Console.ForegroundColor = ConsoleColor.Green;
