@@ -23,8 +23,9 @@ while (running)
 {
     string equippedName = player.EquippedWeapon?.Name ?? "None";
     int equippedBonus = player.EquippedWeapon?.MaxHitBonus ?? 0;
+    SpriteRenderer.DrawGold(player.Gold);
 
-    Console.WriteLine($"\n[HP: {player.CurrentHp}/{player.MaxHp} | Gold: {player.Gold} GP | Spec: {player.SpecialEnergy}% | Weapon: {equippedName} (+{equippedBonus})]");
+    Console.WriteLine($"\n[HP: {player.CurrentHp}/{player.MaxHp} | Spec: {player.SpecialEnergy}% | Weapon: {equippedName} (+{equippedBonus})]");
     Console.WriteLine("[1] Log Boss Kill          [2] View Drop Log           [3] View Inventory");
     Console.WriteLine("[4] Drop Item              [5] Rest at Lumbridge       [6] View High Scores");
     Console.WriteLine("[7] General Store          [8] Drop Statistics         [9] Equip Weapon");
