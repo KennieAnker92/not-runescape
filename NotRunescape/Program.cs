@@ -1,9 +1,9 @@
 ﻿using NotRunescape;
-using OsrsTracker;
 
 var bossLogs = new List<BossLog>();
 var player = new Player();
 var highScores = new HighScores();
+Shop store = new();
 
 Console.WriteLine("=== OSRS Boss & Combat Tracker ===");
 Console.WriteLine("What is your character name? ");
@@ -20,7 +20,7 @@ player.SetStartingGold(100);
 while (true)
 {
     Console.WriteLine($"\n[HP: {player.CurrentHp}/{player.MaxHp} | Gold: {player.Gold} GP]");
-    Console.Write("[1] Log Boss Kill  [2] View Drop Log  [3] View Inventory  [4] Drop Item  [5] Rest at Lumbridge  [6] View High Scores  [99] Fight Hill Giant  [0] Exit\nChoice: ");
+    Console.Write("[1] Log Boss Kill  [2] View Drop Log  [3] View Inventory  [4] Drop Item  [5] Rest at Lumbridge  [6] View High Scores [7] Visit Store [8] Drop Statistics [99] Fight Hill Giant  [0] Exit\nChoice: ");
     var input = Console.ReadLine()?.Trim();
 
     if (input == "0") break;
@@ -71,6 +71,14 @@ while (true)
     else if (input == "99")
     {
         StartGiantFight(player, bossLogs, highScores);
+    }
+    else if (input == "7")
+    {
+        store.OpenStore(player);
+    }
+    else if (input == "8")
+    {
+        DropAnalytics.DisplayDropStatistics(bossLogs);
     }
 }
 
