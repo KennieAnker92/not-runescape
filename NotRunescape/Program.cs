@@ -137,7 +137,7 @@ static void StartGiantFight(Player player, List<BossLog> bossLogs, HighScores hi
     while (player.CurrentHp > 0 && giantHp > 0)
     {
         Console.WriteLine($"Your HP: {player.CurrentHp}/{player.MaxHp} | Hill Giant HP: {giantHp}");
-        Console.Write("Action: [1] Slash with Rune Scimitar  [2] Eat Lobster  [3] Special Attack (50 GP)  [4] Flee Choice: ");
+        Console.Write("Action: [1] Slash with Rune Scimitar  [2] Eat Lobster  [3] Special Attack (50%)  [4] Flee Choice: ");
         var choice = Console.ReadLine()?.Trim();
 
         if (choice == "1")
@@ -145,6 +145,7 @@ static void StartGiantFight(Player player, List<BossLog> bossLogs, HighScores hi
             int playerHit = rng.Next(0, 15);
             giantHp -= playerHit;
             highScores.RecordHit(playerHit);
+            player.RechargeSpecialEnergy(10);
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"\nYou slash the Hill Giant for a {playerHit}!");
             Console.ResetColor();
@@ -164,13 +165,13 @@ static void StartGiantFight(Player player, List<BossLog> bossLogs, HighScores hi
         }
         else if (choice == "3")
         {
-            if (player.Gold < 50)
+            if (player.SpecialEnergy < 50)
             {
-                Console.WriteLine("\nYou don't have enough GP to use a special attack! (Requires 50 GP)");
+                Console.WriteLine("\nNot enough Special Energy! (Requires 50%)");
             }
             else
             {
-                player.Gold -= 50;
+                player.ConsumeSpecialEnergy(50);
                 int hit1 = rng.Next(0, 10);
                 int hit2 = rng.Next(0, 10);
                 

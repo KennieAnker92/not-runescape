@@ -10,6 +10,19 @@ public class Player
         { "Lobster", 3 },
         { "Rune Scimitar", 1 }
     };
+    
+    public int SpecialEnergy { get; set; } = 100;
+    public const int MaxSpecialEnergy = 100;
+
+    public void ConsumeSpecialEnergy(int amount)
+    {
+        SpecialEnergy = Math.Max(0, SpecialEnergy - amount);
+    }
+
+    public void RechargeSpecialEnergy(int amount)
+    {
+        SpecialEnergy = Math.Min(MaxSpecialEnergy, SpecialEnergy + amount);
+    }
 
     public void SetStartingGold(int gold)
     {
