@@ -82,21 +82,29 @@ static void HandleDropItem(Player player)
     Console.Write("\nEnter the exact name of the item to drop: ");
     string itemToDrop = Console.ReadLine()?.Trim() ?? "";
 
-    Console.Write("How many to drop?: ");
-    if (int.TryParse(Console.ReadLine(), out int amount) && amount > 0)
+    if (!player.Inventory.ContainsKey(itemToDrop))
     {
-        if (player.DropItem(itemToDrop, amount))
-        {
-            Console.WriteLine($"Dropped {amount}x {itemToDrop}.");
-        }
-        else
-        {
-            Console.WriteLine("You don't have enough of that item to drop.");
-        }
+        Console.WriteLine("Item not found in inventory.");
+        return;
+    }
+
+    Console.Write($"How many '{itemToDrop}' would you like to drop?: ");
+    string quantityInput = Console.ReadLine()?.Trim() ?? "";
+
+    // Exercise 10 Requirement: Guard against invalid parsing and negative/zero quantities
+    if (!int.TryParse(quantityInput, out int amount) || amount <= 0)
+    {
+        Console.WriteLine("Invalid quantity. Please enter a positive whole number.");
+        return;
+    }
+
+    if (player.DropItem(itemToDrop, amount))
+    {
+        Console.WriteLine($"Successfully dropped {amount}x {itemToDrop}.");
     }
     else
     {
-        Console.WriteLine("Invalid amount.");
+        Console.WriteLine($"You do not have {amount}x {itemToDrop} to drop.");
     }
 }
 
