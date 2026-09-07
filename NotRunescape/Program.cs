@@ -132,6 +132,7 @@ static void StartGiantFight(Player player, List<BossLog> bossLogs, HighScores hi
     Console.ResetColor();
 
     int giantHp = 35;
+    int prayerTurnsRemaining = 0;
     var rng = new Random();
 
     while (player.CurrentHp > 0 && giantHp > 0)
@@ -184,8 +185,41 @@ static void StartGiantFight(Player player, List<BossLog> bossLogs, HighScores hi
                 Console.WriteLine($"\nYou unleash a Special Attack! Hits: {hit1} and {hit2} (Total {totalHit})");
                 Console.ResetColor();
             }
+        }else if (choice == "4")
+        {
+            if (player.Gold < 10)
+            {
+                Console.WriteLine("\nYou need at least 10 GP to activate Protection Prayer!");
+            }
+            else
+            {
+                player.Gold -= 10;
+                prayerTurnsRemaining = 3;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\nActivated Protect from Melee! Incoming damage halved for 3 turns.");
+                Console.ResetColor();
+            }
         }
-        else if (choice == "4")
+
+// When monster attacks player:
+        if (giantHp > 0)
+        {
+            int rawHit = rng.Next(0, 6);
+            int finalHit = rawHit;
+
+            if (prayerTurnsRemaining > 0)
+            {
+                finalHit /= 2; // Halve damage
+                prayerTurnsRemaining--;
+                Console.WriteLine($"[Protect from Melee Active - {prayerTurnsRemaining} turns remaining]");
+            }
+
+            player.CurrentHp -= finalHit;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"The Hill Giant swings his club for {finalHit} damage! (Raw: {rawHit})\n");
+            Console.ResetColor();
+        }
+        else if (choice == "5")
         {
             Console.WriteLine("\nYou flee from the Hill Giant! Returning to Lumbridge...");
             player.CurrentHp = player.MaxHp;
