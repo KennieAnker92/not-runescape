@@ -13,6 +13,25 @@ public class Player
     
     public int SpecialEnergy { get; set; } = 100;
     public const int MaxSpecialEnergy = 100;
+    
+    public Weapon? EquippedWeapon { get; set; } = new Weapon("Rune Scimitar", 5);
+
+    /// <summary>
+    /// Equips a weapon from inventory, returning the currently equipped weapon back to inventory.
+    /// </summary>
+    public void EquipWeapon(Weapon newWeapon)
+    {
+        // Return current weapon to inventory if equipped
+        if (EquippedWeapon != null)
+        {
+            AddItem(EquippedWeapon.Name, 1);
+        }
+
+        // Remove 1x of the new weapon from inventory and equip
+        DropItem(newWeapon.Name, 1);
+        EquippedWeapon = newWeapon;
+        Console.WriteLine($"Equipped {newWeapon.Name} (+{newWeapon.MaxHitBonus} Max Hit Bonus)!");
+    }
 
     public void ConsumeSpecialEnergy(int amount)
     {
