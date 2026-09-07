@@ -3,82 +3,121 @@
 var bossLogs = new List<BossLog>();
 var player = new Player();
 var highScores = new HighScores();
-Shop store = new();
+var store = new Shop();
+var combatEngine = new CombatEngine();
 
 Console.WriteLine("=== OSRS Boss & Combat Tracker ===");
-Console.WriteLine("What is your character name? ");
-
+Console.Write("What is your character name?: ");
 var characterName = Console.ReadLine()?.Trim();
 
 if (string.IsNullOrWhiteSpace(characterName))
     characterName = "Adventurer";
 
-Console.WriteLine($"Welcome to Gielinor, {characterName}");
+Console.WriteLine($"Welcome to Gielinor, {characterName}!");
 
-player.SetStartingGold(100);
+player.SetStartingGold(Player.StarterGold);
 
-while (true)
+bool running = true;
+
+while (running)
 {
-    Console.WriteLine($"\n[HP: {player.CurrentHp}/{player.MaxHp} | Gold: {player.Gold} GP]");
-    Console.Write("[1] Log Boss Kill  [2] View Drop Log  [3] View Inventory  [4] Drop Item  [5] Rest at Lumbridge  [6] View High Scores [7] Visit Store [8] Drop Statistics [99] Fight Hill Giant  [0] Exit\nChoice: ");
+    string equippedName = player.EquippedWeapon?.Name ?? "None";
+    int equippedBonus = player.EquippedWeapon?.MaxHitBonus ?? 0;
+
+    Console.WriteLine($"\n[HP: {player.CurrentHp}/{player.MaxHp} | Gold: {player.Gold} GP | Spec: {player.SpecialEnergy}% | Weapon: {equippedName} (+{equippedBonus})]");
+    Console.WriteLine("[1] Log Boss Kill          [2] View Drop Log           [3] View Inventory");
+    Console.WriteLine("[4] Drop Item              [5] Rest at Lumbridge       [6] View High Scores");
+    Console.WriteLine("[7] General Store          [8] Drop Statistics         [9] Equip Weapon");
+    Console.WriteLine("[99] Fight Monster         [0] Exit");
+    Console.Write("Choice: ");
+
     var input = Console.ReadLine()?.Trim();
 
-    if (input == "0") break;
+    switch (input)
+    {
+        case "1":
+            LogKill(bossLogs);
+            break;
 
-    if (input == "1")
-    {
-        Console.Write("Boss Name (e.g., Zulrah, Vorkath): ");
-        string boss = Console.ReadLine() ?? "Unknown";
+        case "2":
+            PrintDropLog(bossLogs);
+            break;
 
-        Console.Write("Valuable Drop (e.g., Tanzanite Fang, None): ");
-        string drop = Console.ReadLine() ?? "None";
+        case "3":
+            player.PrintInventory();
+            break;
 
-        Console.Write("Did you get a unique drop? (y/n): ");
-        bool isUnique = Console.ReadLine()?.Trim().ToLower() == "y";
+        case "4":
+            HandleDropItem(player);
+            break;
 
-        bossLogs.Add(new BossLog { BossName = boss, DropName = drop, IsUnique = isUnique });
-        Console.WriteLine("Kill logged!");
+        case "5":
+            player.ResetHealth();
+            Console.WriteLine("\nYou rest at Lumbridge. Your HP and Special Energy have been fully restored!");
+            break;
+
+        case "6":
+            highScores.DisplayTopHits();
+            break;
+
+        case "7":
+            store.OpenStore(player);
+            break;
+
+        case "8":
+            DropAnalytics.DisplayDropStatistics(bossLogs);
+            break;
+
+        case "9":
+            HandleEquipWeapon(player);
+            break;
+
+        case "99":
+            SelectAndFightMonster(player, bossLogs, highScores, combatEngine);
+            break;
+
+        case "0":
+            running = false;
+            Console.WriteLine("Goodbye!");
+            break;
+
+        default:
+            Console.WriteLine("Invalid option! Please enter a number from the menu.");
+            break;
     }
-    else if (input == "2")
+}
+
+static void LogKill(List<BossLog> bossLogs)
+{
+    Console.Write("\nBoss Name (e.g., Zulrah, Vorkath): ");
+    string boss = Console.ReadLine() ?? "Unknown";
+
+    Console.Write("Valuable Drop (e.g., Tanzanite Fang, None): ");
+    string drop = Console.ReadLine() ?? "None";
+
+    Console.Write("Did you get a unique drop? (y/n): ");
+    bool isUnique = Console.ReadLine()?.Trim().ToLower() == "y";
+
+    bossLogs.Add(new BossLog { BossName = boss, DropName = drop, IsUnique = isUnique });
+    Console.WriteLine("Kill logged!");
+}
+
+static void PrintDropLog(List<BossLog> bossLogs)
+{
+    Console.WriteLine("\n--- Drop Log ---");
+    if (bossLogs.Count == 0)
     {
-        Console.WriteLine("\n--- Drop Log ---");
-        if (bossLogs.Count == 0) Console.WriteLine("No drops logged yet!");
-        else Console.WriteLine("You have " + bossLogs.Count + " drops logged.");
-        
-        for (int i = 0; i < bossLogs.Count; i++)
-        {
-            var log = bossLogs[i];
-            string status = log.IsUnique ? "UNIQUE DROP!" : "Normal Drop";
-            Console.WriteLine($"#{i + 1}: {log.BossName} - Drop: {log.DropName} [{status}] ({log.Timestamp:HH:mm})");
-        }
+        Console.WriteLine("No drops logged yet!");
+        return;
     }
-    else if (input == "3")
+
+    Console.WriteLine($"You have {bossLogs.Count} total drops logged.\n");
+
+    for (int i = 0; i < bossLogs.Count; i++)
     {
-        player.PrintInventory();
-    }
-    else if (input == "4")
-    {
-        HandleDropItem(player);
-    }
-    else if (input == "5")
-    {
-        player.ResetHealth();
-    }
-    else if (input == "6")
-    {
-        highScores.DisplayTopHits();
-    }
-    else if (input == "99")
-    {
-        StartGiantFight(player, bossLogs, highScores);
-    }
-    else if (input == "7")
-    {
-        store.OpenStore(player);
-    }
-    else if (input == "8")
-    {
-        DropAnalytics.DisplayDropStatistics(bossLogs);
+        var log = bossLogs[i];
+        string status = log.IsUnique ? "UNIQUE DROP!" : "Normal Drop";
+        Console.WriteLine($"#{i + 1}: {log.BossName} - Drop: {log.DropName} [{status}] ({log.Timestamp:HH:mm})");
     }
 }
 
@@ -97,191 +136,73 @@ static void HandleDropItem(Player player)
     }
 
     Console.Write($"How many '{itemToDrop}' would you like to drop?: ");
-    string quantityInput = Console.ReadLine()?.Trim() ?? "";
-
-    // Exercise 10 Requirement: Guard against invalid parsing and negative/zero quantities
-    if (!int.TryParse(quantityInput, out int amount) || amount <= 0)
+    
+    if (int.TryParse(Console.ReadLine()?.Trim(), out int amount) && amount > 0)
     {
-        Console.WriteLine("Invalid quantity. Please enter a positive whole number.");
-        return;
-    }
-
-    if (player.DropItem(itemToDrop, amount))
-    {
-        Console.WriteLine($"Successfully dropped {amount}x {itemToDrop}.");
-    }
-    else
-    {
-        Console.WriteLine($"You do not have {amount}x {itemToDrop} to drop.");
-    }
-}
-
-static void StartGiantFight(Player player, List<BossLog> bossLogs, HighScores highScores)
-{
-    if (player.CurrentHp <= 0)
-    {
-        Console.WriteLine("\nYou are too weak to fight! Respawning at Lumbridge...");
-        player.CurrentHp = player.MaxHp;
-        return;
-    }
-
-    Console.Clear();
-    Console.ForegroundColor = ConsoleColor.Yellow;
-    Console.WriteLine("=== HILL GIANT CAVE ===");
-    Console.WriteLine("A wild Hill Giant (Level 28) blocks your path!\n");
-    Console.ResetColor();
-
-    int giantHp = 35;
-    int prayerTurnsRemaining = 0;
-    var rng = new Random();
-
-    while (player.CurrentHp > 0 && giantHp > 0)
-    {
-        Console.WriteLine($"Your HP: {player.CurrentHp}/{player.MaxHp} | Hill Giant HP: {giantHp}");
-        Console.Write("Action: [1] Slash with Rune Scimitar  [2] Eat Lobster  [3] Special Attack (50%)  [4] Flee Choice: ");
-        var choice = Console.ReadLine()?.Trim();
-
-        if (choice == "1")
+        if (player.DropItem(itemToDrop, amount))
         {
-            int playerHit = rng.Next(0, 15);
-            giantHp -= playerHit;
-            highScores.RecordHit(playerHit);
-            player.RechargeSpecialEnergy(10);
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nYou slash the Hill Giant for a {playerHit}!");
-            Console.ResetColor();
-        }
-        else if (choice == "2")
-        {
-            if (player.Inventory.ContainsKey("Lobster") && player.Inventory["Lobster"] > 0)
-            {
-                player.Inventory["Lobster"]--;
-                player.CurrentHp = Math.Min(player.MaxHp, player.CurrentHp + 12);
-                Console.WriteLine($"\nYou ate a Lobster! Restored HP to {player.CurrentHp}.");
-            }
-            else
-            {
-                Console.WriteLine("\nYou don't have any Lobsters in your inventory!");
-            }
-        }
-        else if (choice == "3")
-        {
-            if (player.SpecialEnergy < 50)
-            {
-                Console.WriteLine("\nNot enough Special Energy! (Requires 50%)");
-            }
-            else
-            {
-                player.ConsumeSpecialEnergy(50);
-                int hit1 = rng.Next(0, 10);
-                int hit2 = rng.Next(0, 10);
-                
-                highScores.RecordHit(hit1);
-                highScores.RecordHit(hit2);
-                
-                int totalHit = hit1 + hit2;
-                giantHp -= totalHit;
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"\nYou unleash a Special Attack! Hits: {hit1} and {hit2} (Total {totalHit})");
-                Console.ResetColor();
-            }
-        }else if (choice == "4")
-        {
-            if (player.Gold < 10)
-            {
-                Console.WriteLine("\nYou need at least 10 GP to activate Protection Prayer!");
-            }
-            else
-            {
-                player.Gold -= 10;
-                prayerTurnsRemaining = 3;
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("\nActivated Protect from Melee! Incoming damage halved for 3 turns.");
-                Console.ResetColor();
-            }
-        }
-
-// When monster attacks player:
-        if (giantHp > 0)
-        {
-            int rawHit = rng.Next(0, 6);
-            int finalHit = rawHit;
-
-            if (prayerTurnsRemaining > 0)
-            {
-                finalHit /= 2; // Halve damage
-                prayerTurnsRemaining--;
-                Console.WriteLine($"[Protect from Melee Active - {prayerTurnsRemaining} turns remaining]");
-            }
-
-            player.CurrentHp -= finalHit;
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"The Hill Giant swings his club for {finalHit} damage! (Raw: {rawHit})\n");
-            Console.ResetColor();
-        }
-        else if (choice == "5")
-        {
-            Console.WriteLine("\nYou flee from the Hill Giant! Returning to Lumbridge...");
-            player.CurrentHp = player.MaxHp;
-            return;
+            Console.WriteLine($"Successfully dropped {amount}x {itemToDrop}.");
         }
         else
         {
-            Console.WriteLine("\nInvalid choice! Please select a valid action.");
-        }            
-
-        if (giantHp > 0)
-        {
-            int giantHit = rng.Next(0, 6);
-            player.CurrentHp -= giantHit;
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"The Hill Giant swings his club for {giantHit} damage!\n");
-            Console.ResetColor();
-        }
-    }
-
-    if (player.CurrentHp > 0)
-    {
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("\nVICTORY! The Hill Giant collapses!");
-        Console.ResetColor();
-
-        // Selective Loot Prompt
-        var droppedItems = new List<(string Name, bool IsUnique)>
-        {
-            ("Big Bones", false),
-            ("Limpwurt Root", false),
-            ("Giant Key", true)
-        };
-
-        Console.WriteLine("\n--- Ground Loot ---");
-        foreach (var drop in droppedItems)
-        {
-            Console.Write($"Pick up {drop.Name}? (y/n): ");
-            var choice = Console.ReadLine()?.Trim().ToLower();
-
-            if (choice == "y")
-            {
-                player.AddItem(drop.Name, 1);
-                bossLogs.Add(new BossLog
-                {
-                    BossName = "Hill Giant",
-                    DropName = drop.Name,
-                    IsUnique = drop.IsUnique
-                });
-                Console.WriteLine($"Picked up 1x {drop.Name} and logged it!");
-            }
-            else
-            {
-                Console.WriteLine($"Left {drop.Name} on the ground.");
-            }
+            Console.WriteLine("You don't have enough of that item to drop.");
         }
     }
     else
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("\nOh dear, you are dead! Teleporting back to Lumbridge...");
-        player.CurrentHp = player.MaxHp;
-        Console.ResetColor();
+        Console.WriteLine("Invalid amount. Must be a positive integer.");
     }
+}
+
+static void HandleEquipWeapon(Player player)
+{
+    Console.WriteLine("\n--- Equipment Management ---");
+    Console.WriteLine($"Currently Equipped: {(player.EquippedWeapon != null ? player.EquippedWeapon.Name + " (+" + player.EquippedWeapon.MaxHitBonus + " Bonus)" : "None")}");
+    
+    var knownWeapons = new List<Weapon>
+    {
+        new Weapon("Rune Scimitar", 5),
+        new Weapon("Abyssal Whip", 9),
+        new Weapon("Bronze Spear", 2)
+    };
+
+    var availableWeapons = knownWeapons.Where(w => player.Inventory.ContainsKey(w.Name) && player.Inventory[w.Name] > 0).ToList();
+
+    if (availableWeapons.Count == 0)
+    {
+        Console.WriteLine("No equipable weapons found in inventory!");
+        return;
+    }
+
+    Console.WriteLine("\nWeapons available in inventory:");
+    for (int i = 0; i < availableWeapons.Count; i++)
+    {
+        Console.WriteLine($"[{i + 1}] {availableWeapons[i].Name} (+{availableWeapons[i].MaxHitBonus} Max Hit)");
+    }
+    Console.Write("Select a weapon to equip (0 to cancel): ");
+
+    if (int.TryParse(Console.ReadLine()?.Trim(), out int choice) && choice > 0 && choice <= availableWeapons.Count)
+    {
+        player.EquipWeapon(availableWeapons[choice - 1]);
+    }
+}
+
+static void SelectAndFightMonster(Player player, List<BossLog> bossLogs, HighScores highScores, CombatEngine engine)
+{
+    Console.WriteLine("\n=== Select Monster ===");
+    Console.WriteLine("[1] Goblin (Level 2)");
+    Console.WriteLine("[2] Hill Giant (Level 28)");
+    Console.WriteLine("[3] Moss Giant (Level 42)");
+    Console.Write("Choice: ");
+
+    var choice = Console.ReadLine()?.Trim();
+
+    Monster monster = choice switch
+    {
+        "1" => new Monster("Goblin", 2, 12, 3, new List<(string, bool)> { ("Bronze Spear", true) }),
+        "3" => new Monster("Moss Giant", 42, 60, 10, new List<(string, bool)> { ("Big Bones", false), ("Ranarr Seed", true) }),
+        _ => new Monster("Hill Giant", 28, 35, 6, new List<(string, bool)> { ("Big Bones", false), ("Limpwurt Root", false), ("Giant Key", true) })
+    };
+
+    engine.FightMonster(player, monster, bossLogs, highScores);
 }
